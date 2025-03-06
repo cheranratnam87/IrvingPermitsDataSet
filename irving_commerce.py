@@ -50,7 +50,7 @@ def main():
         <br>
         <a href='https://cheranratnam.com/about/' target='_blank'>Website</a> | 
         <a href='https://www.linkedin.com/in/cheranratnam/' target='_blank'>LinkedIn</a> | 
-        <a href='https://catalog.data.gov/dataset/electric-vehicle-population-data' target='_blank'>Link To Dataset</a>
+        <a href='https://data-cityofirving.opendata.arcgis.com/datasets/f5db890d65d640efa350c9419c248aad_0/explore'>Link To Dataset</a>
     </p>
     <hr>
     """, unsafe_allow_html=True)
