@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 def load_data():
     # Replace with your own CSV path or data source
     df = pd.read_csv(
-        r"C:\Users\chera\Desktop\custom_llm\streamlit\Commercial_Permits_Issued%3A_Feb_15_2022_Through_Present.csv"
+        r"https://raw.githubusercontent.com/cheranratnam87/IrvingPermitsDataSet/refs/heads/main/Commercial_Permits_Issued%253A_Feb_15_2022_Through_Present.csv"
     )
     
     # Extract ZIP codes
