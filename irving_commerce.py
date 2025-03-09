@@ -154,7 +154,7 @@ def main():
 
 
         # 5. Project Size & Duration Insights 
-        st.subheader("5. Project Size & Duration Insights")
+        st.subheader("Project Size & Duration Insights")
 
         # (A) Average Square Footage by Permit Type
         sq_ft_df = filtered_df.dropna(subset=['Square_Feet'])
