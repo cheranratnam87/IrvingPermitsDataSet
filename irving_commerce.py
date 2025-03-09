@@ -145,7 +145,7 @@ def main():
         st.pyplot(fig3)
 
         # --- Valuation & Fees Analysis ---------------------------------------
-    st.subheader("4. Valuation & Fees Analysis")
+    st.subheader("Valuation & Fees Analysis")
 
     # (A) Scatter Plot: Valuation vs Fees
     val_fees_df = filtered_df.dropna(subset=['Valuation_clean', 'Fees_Paid_clean'])
@@ -194,7 +194,7 @@ def main():
         st.pyplot(fig5)
 
     # --- Project Size & Duration Insights --------------------------------
-    st.subheader("5. Project Size & Duration Insights")
+    st.subheader("Project Size & Duration Insights")
 
     # (A) Average Square Footage by Permit Type
     sq_ft_df = filtered_df.dropna(subset=['Square_Feet'])
