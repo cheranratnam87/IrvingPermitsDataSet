@@ -148,7 +148,7 @@ def main():
         val_fees_df = filtered_df.dropna(subset=['Valuation_clean', 'Fees_Paid_clean'])
 
         fig4, ax4 = plt.subplots(figsize=(10, 6))
-        sns.scatterplot(data=val_fees_df, x='Valuation_clean', y='Fees_Paid_clean', ax=ax4, alpha=0.6)
+        sns.scatterplot(data=val_fees_df, x='Valuation_clean', y='Fees_Paid', ax=ax4, alpha=0.6)
         ax4.set_title("Valuation vs. Fees Paid")
         st.pyplot(fig4)
 
