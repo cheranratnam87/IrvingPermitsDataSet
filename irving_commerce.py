@@ -115,7 +115,7 @@ def main():
     tab1, tab2 = st.tabs(["📊 Dashboard", "💰 Fee Estimate"])
 
     with tab1:
-        # Permit Types by Count
+        # 1. Permit Types by Count
         permit_type_counts = filtered_df['Permit_Type'].value_counts().reset_index()
         permit_type_counts.columns = ['Permit_Type', 'Count']
 
@@ -125,7 +125,7 @@ def main():
         plt.xticks(rotation=45, ha='right')
         st.pyplot(fig1)
 
-        # Permit Status Counts
+        # 2. Permit Status Counts
         status_counts = filtered_df['Status'].value_counts().reset_index()
         status_counts.columns = ['Status', 'Count']
 
@@ -135,7 +135,7 @@ def main():
         plt.xticks(rotation=45, ha='right')
         st.pyplot(fig2)
 
-        # Permit Counts Over the Years
+        # 3. Permit Counts Over the Years
         yearly_counts = filtered_df.groupby('Year').size().reset_index(name='Count')
 
         fig3, ax3 = plt.subplots(figsize=(10, 6))
@@ -144,120 +144,97 @@ def main():
         plt.xticks(rotation=45, ha='right')
         st.pyplot(fig3)
 
-        # --- Valuation & Fees Analysis ---------------------------------------
-    st.subheader("Valuation & Fees Analysis")
+        # 4. Valuation vs. Fees Paid
+        val_fees_df = filtered_df.dropna(subset=['Valuation_clean', 'Fees_Paid_clean'])
 
-    # (A) Scatter Plot: Valuation vs Fees
-    val_fees_df = filtered_df.dropna(subset=['Valuation_clean', 'Fees_Paid_clean'])
-    if val_fees_df.empty:
-        st.warning("No Valuation/Fees data available for the selected filters.")
-    else:
         fig4, ax4 = plt.subplots(figsize=(10, 6))
-        sns.scatterplot(
-            data=val_fees_df,
-            x='Valuation_clean',
-            y='Fees_Paid_clean',
-            ax=ax4,
-            alpha=0.6
-        )
+        sns.scatterplot(data=val_fees_df, x='Valuation_clean', y='Fees_Paid_clean', ax=ax4, alpha=0.6)
         ax4.set_title("Valuation vs. Fees Paid")
-        ax4.set_xlabel("Valuation (USD)")
-        ax4.set_ylabel("Fees Paid (USD)")
-        plt.tight_layout()
         st.pyplot(fig4)
 
-    # (B) Average Fees by Permit Type
-    avg_fees = (
-        filtered_df
-        .dropna(subset=['Fees_Paid_clean'])
-        .groupby('Permit_Type')['Fees_Paid_clean']
-        .mean()
-        .reset_index(name='Avg_Fees')
-    )
 
-    if avg_fees.empty:
-        st.warning("No fee data available for the selected filters.")
-    else:
-        fig5, ax5 = plt.subplots(figsize=(10, 6))
-        sns.barplot(
-            data=avg_fees,
-            x='Permit_Type',
-            y='Avg_Fees',
-            palette='Blues_d',
-            ax=ax5
-        )
-        ax5.set_title("Average Fees Paid by Permit Type")
-        ax5.set_xlabel("Permit Type")
-        ax5.set_ylabel("Average Fees (USD)")
-        plt.xticks(rotation=45, ha='right')
-        plt.tight_layout()
-        st.pyplot(fig5)
+        # 5. Project Size & Duration Insights 
+        st.subheader("5. Project Size & Duration Insights")
 
-    # --- Project Size & Duration Insights --------------------------------
-    st.subheader("Project Size & Duration Insights")
-
-    # (A) Average Square Footage by Permit Type
-    sq_ft_df = filtered_df.dropna(subset=['Square_Feet'])
-    if not sq_ft_df.empty:
-        avg_sq_ft = (
-            sq_ft_df
-            .groupby('Permit_Type')['Square_Feet']
-            .mean()
-            .reset_index(name='Avg_SqFt')
+        # (A) Average Square Footage by Permit Type
+        sq_ft_df = filtered_df.dropna(subset=['Square_Feet'])
+        if not sq_ft_df.empty:
+            avg_sq_ft = (
+                sq_ft_df
+                .groupby('Permit_Type')['Square_Feet']
+                .mean()
+                .reset_index(name='Avg_SqFt')
         )
         
-        fig6, ax6 = plt.subplots(figsize=(10, 6))
-        sns.barplot(
-            data=avg_sq_ft,
-            x='Permit_Type',
-            y='Avg_SqFt',
-            palette='Greens_d',
-            ax=ax6
+            fig6, ax6 = plt.subplots(figsize=(10, 6))
+            sns.barplot(
+                data=avg_sq_ft,
+                x='Permit_Type',
+                y='Avg_SqFt',
+                palette='Greens_d',
+                ax=ax6
         )
-        ax6.set_title("Average Square Footage by Permit Type")
-        ax6.set_xlabel("Permit Type")
-        ax6.set_ylabel("Avg. Square Feet")
-        plt.xticks(rotation=45, ha='right')
-        plt.tight_layout()
-        st.pyplot(fig6)
-    else:
-        st.info("No square footage data available for the selected filters.")
+            ax6.set_title("Average Square Footage by Permit Type")
+            ax6.set_xlabel("Permit Type")
+            ax6.set_ylabel("Avg. Square Feet")
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            st.pyplot(fig6)
+        else:
+            st.info("No square footage data available for the selected filters.")
 
-    # (B) Duration Boxplot by Permit Type (if Finaled) - With Outlier Handling
-    duration_df = filtered_df.dropna(subset=['Duration', 'Permit_Type']).copy()
+        # (B) Duration Boxplot by Permit Type (if Finaled) - With Outlier Handling
+        duration_df = filtered_df.dropna(subset=['Duration', 'Permit_Type']).copy()
 
-    # 1. Remove negative durations
-    duration_df = duration_df[duration_df['Duration'] >= 0]
+        # 1. Remove negative durations
+        duration_df = duration_df[duration_df['Duration'] >= 0]
 
-    # 2. Cap outliers at the 95th percentile
-    upper_cap = duration_df['Duration'].quantile(0.95)
-    duration_df.loc[duration_df['Duration'] > upper_cap, 'Duration'] = upper_cap
+        # 2. Cap outliers at the 95th percentile
+        upper_cap = duration_df['Duration'].quantile(0.95)
+        duration_df.loc[duration_df['Duration'] > upper_cap, 'Duration'] = upper_cap
 
-    if not duration_df.empty:
-        fig7, ax7 = plt.subplots(figsize=(10, 6))
-        sns.boxplot(
-            data=duration_df,
-            x='Permit_Type',
-            y='Duration',
-            ax=ax7
+        if not duration_df.empty:
+            fig7, ax7 = plt.subplots(figsize=(10, 6))
+            sns.boxplot(
+                data=duration_df,
+                x='Permit_Type',
+                y='Duration',
+                ax=ax7
         )
-        ax7.set_title("Permit Duration (Days) by Permit Type (Outliers Capped)")
-        ax7.set_xlabel("Permit Type")
-        ax7.set_ylabel("Duration (Days)")
-        plt.xticks(rotation=45, ha='right')
-        plt.tight_layout()
-        st.pyplot(fig7)
+            ax7.set_title("Permit Duration (Days) by Permit Type (Outliers Capped)")
+            ax7.set_xlabel("Permit Type")
+            ax7.set_ylabel("Duration (Days)")
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            st.pyplot(fig7)
 
-        # Explanation for users about data cleaning
-        st.markdown("""
-        **Note**: 
-        - Negative durations (where a final date precedes the issued date) were removed as invalid.  
-        - Durations above the 95th percentile are capped to reduce the effect of extreme outliers.  
-        This ensures the boxplot is more readable and focuses on the majority of typical projects.
-        """)
-    else:
-        st.info("No duration data available (no finaled dates) for the selected filters.")
+            # Explanation for users about data cleaning
+            st.markdown("""
+            **Note**: 
+            - Negative durations (where a final date precedes the issued date) were removed as invalid.  
+            - Durations above the 95th percentile are capped to reduce the effect of extreme outliers.  
+            This ensures the boxplot is more readable and focuses on the majority of typical projects.
+            """)
+        else:
+            st.info("No duration data available (no finaled dates) for the selected filters.")
+
+
+    with tab2:
+        st.markdown("### 💰 Fee Estimator")
+
+        selected_permit_type = st.selectbox("Select Permit Type:", permit_types_available)
+        sq_ft_input = st.number_input("Enter Square Feet (optional):", min_value=0, step=100, value=None)
+        valuation_input = st.number_input("Enter Valuation (optional):", min_value=0, step=5000, value=None)
+
+        if st.button("Estimate Fee"):
+            similar_cases, estimated_fee = find_similar_cases(df, selected_permit_type, sq_ft_input, valuation_input)
+
+            if similar_cases is not None and not similar_cases.empty:
+                st.markdown("### 🏠 Similar Cases")
+                st.dataframe(similar_cases)
+                st.markdown(f"### 💵 Estimated Fee: **${estimated_fee:,.2f}**")
+            else:
+                st.warning("No similar cases found. Try adjusting your inputs.")
 
 if __name__ == "__main__":
     main()
-
